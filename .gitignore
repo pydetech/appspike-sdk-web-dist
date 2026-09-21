@@ -1,0 +1,4 @@
+node_modules/
+.DS_Store
+SampleApp/dist/
+SampleApp/package-lock.json

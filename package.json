@@ -1,0 +1,39 @@
+{
+  "name": "@appspike/web",
+  "version": "1.4.5",
+  "description": "AppSpike Remote Config SDK for web — a Firebase Remote Config–compatible API that evaluates config templates locally in the browser",
+  "license": "SEE LICENSE IN LICENSE",
+  "homepage": "https://appspike.dev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pydetech/appspike-sdk-web-dist.git"
+  },
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./app": {
+      "types": "./dist/app/index.d.ts",
+      "import": "./dist/app/index.js",
+      "require": "./dist/app/index.cjs"
+    },
+    "./remote-config": {
+      "types": "./dist/remote-config/index.d.ts",
+      "import": "./dist/remote-config/index.js",
+      "require": "./dist/remote-config/index.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=18"
+  }
+}

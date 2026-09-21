@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content"
+    />
+    <title>AppSpike Remote Config Sample</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        font-family: system-ui, sans-serif;
+      }
+      body {
+        max-width: 640px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+        line-height: 1.5;
+      }
+      fieldset {
+        margin-bottom: 1rem;
+        border-radius: 8px;
+      }
+      label {
+        display: block;
+        margin: 0.5rem 0 0.15rem;
+        font-size: 0.85rem;
+        opacity: 0.8;
+      }
+      input {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 0.4rem;
+        font: inherit;
+        font-size: 16px; /* prevents mobile browsers zooming the page on focus */
+        scroll-margin-block: 5rem; /* keeps the focused field clear of the keyboard edge */
+      }
+      button {
+        margin: 0.5rem 0.5rem 0 0;
+        padding: 0.45rem 0.9rem;
+        font: inherit;
+        cursor: pointer;
+      }
+      output {
+        display: block;
+        margin-top: 0.5rem;
+        font-family: ui-monospace, monospace;
+        white-space: pre-wrap;
+      }
+      .status {
+        font-size: 0.9rem;
+        opacity: 0.85;
+      }
+      nav {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+      }
+      nav a {
+        padding: 0.35rem 0.8rem;
+        border: 1px solid currentColor;
+        border-radius: 999px;
+        text-decoration: none;
+        color: inherit;
+        font-size: 0.9rem;
+      }
+      nav a[aria-current='page'] {
+        background: light-dark(#1a1a1a, #f5f5f5);
+        color: light-dark(#f5f5f5, #1a1a1a);
+        border-color: transparent;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 0.4rem 0.5rem;
+        border-bottom: 1px solid light-dark(#ddd, #444);
+        vertical-align: top;
+        word-break: break-word;
+      }
+      td.value {
+        font-family: ui-monospace, monospace;
+      }
+      td.source {
+        opacity: 0.7;
+        white-space: nowrap;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>AppSpike Remote Config</h1>
+    <p class="status" id="sdk-status">Not initialized</p>
+
+    <nav>
+      <a href="#controls" id="tab-controls">Controls</a>
+      <a href="#values" id="tab-values">All Key/Values</a>
+    </nav>
+
+    <section id="view-controls">
+      <fieldset>
+        <legend>Setup</legend>
+        <p class="status">
+          The API key is a code constant — set it in
+          <code>SampleApp/src/apiKey.ts</code> before running.
+        </p>
+        <label for="app-version">App version (optional, targets app_version conditions)</label>
+        <input id="app-version" placeholder="1.0.0" />
+        <label for="app-build">App build (optional, targets app_build conditions)</label>
+        <input id="app-build" placeholder="42" />
+        <button id="initialize">Initialize</button>
+        <button id="device-context">Device context</button>
+        <output id="setup-result"></output>
+      </fieldset>
+
+      <fieldset>
+        <legend>Settings</legend>
+        <p class="status">In effect: <span id="settings-current">—</span></p>
+        <label for="min-interval">minimumFetchIntervalMillis</label>
+        <input id="min-interval" inputmode="numeric" />
+        <label for="fetch-timeout">fetchTimeoutMillis</label>
+        <input id="fetch-timeout" inputmode="numeric" />
+        <label for="log-level">Log level</label>
+        <select id="log-level">
+          <option value="silent">silent</option>
+          <option value="error" selected>error</option>
+          <option value="debug">debug</option>
+        </select>
+        <button id="apply-settings">Apply</button>
+        <button id="restore-settings">Restore Defaults</button>
+        <output id="settings-result"></output>
+      </fieldset>
+
+      <fieldset>
+        <legend>Custom signals</legend>
+        <label for="signal-key">Signal key</label>
+        <input id="signal-key" placeholder="tier" />
+        <label for="signal-value">Signal value (string or number)</label>
+        <input id="signal-value" placeholder="gold" />
+        <button id="set-signal">Apply Signal</button>
+        <button id="remove-signal">Remove Signal</button>
+        <button id="preset-signal">Preset: tier=gold</button>
+        <output id="signal-result"></output>
+      </fieldset>
+
+      <fieldset>
+        <legend>Fetch</legend>
+        <button id="fetch">Fetch</button>
+        <button id="fetch-activate">Fetch &amp; Activate</button>
+        <button id="bypass-activate">Bypass Cache &amp; Activate</button>
+        <output id="fetch-result"></output>
+      </fieldset>
+
+      <fieldset>
+        <legend>Read a value</legend>
+        <label for="key">Parameter key</label>
+        <input id="key" placeholder="welcome_message" />
+        <button id="read">Read</button>
+        <output id="read-result"></output>
+      </fieldset>
+
+      <fieldset>
+        <legend>Reset</legend>
+        <p class="status">
+          Clears fetched, activated and default values, then re-applies this sample's
+          in-app defaults.
+        </p>
+        <button id="reset">Reset</button>
+        <output id="tools-result"></output>
+      </fieldset>
+    </section>
+
+    <section id="view-values" hidden>
+      <h2>All Key/Values</h2>
+      <label for="values-filter">Key prefix</label>
+      <input id="values-filter" placeholder="Filter by key prefix" />
+      <button id="refresh-values">Refresh</button>
+      <table>
+        <thead>
+          <tr>
+            <th>Key</th>
+            <th>Value</th>
+            <th>Source</th>
+          </tr>
+        </thead>
+        <tbody id="values-body"></tbody>
+      </table>
+      <output id="values-empty"></output>
+    </section>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

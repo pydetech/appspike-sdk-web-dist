@@ -1,0 +1,6 @@
+# Optional: `docker compose up` builds and serves the sample on http://localhost:4173
+services:
+  sample:
+    build: .
+    ports:
+      - "4173:4173"
